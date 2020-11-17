@@ -1,0 +1,411 @@
+#include <iostream>
+#include <cstdlib>
+#include <string>
+#include <fstream>
+#include <iterator>
+#include <algorithm>
+#include <vector>
+
+
+using namespace std;
+
+vector <vector<int> >tab_vertex;
+vector<vector<int> >i_edges;
+vector<vector<int> >orginal_g;
+vector<vector<int> >Final_oGraph;
+int number_of_vertex=0,counter=0,adjoint=1, linear=1;
+
+
+
+int Load()
+{
+
+    int vertex=0;
+    string name,line_string;
+    cout<<"Enter file name: ";
+    cin>>name;
+    string fileName= name + ".txt";
+    fstream file;
+    file.open(fileName.c_str(), ios::in);
+
+    if(!file.good())
+    {
+        cout<<endl<<"I can't load file properly!"<<endl;
+        return 0;
+    }
+
+    getline(file,line_string);
+    number_of_vertex= atoi(line_string.c_str());
+    cout<<"Number of vertex: "<<number_of_vertex<<endl;
+
+    while(!file.eof())
+    {
+        vector <int>list_of_successors;
+        file>>vertex;
+        while(vertex!=0)
+        {
+            cout<<"Vertex number: "<<vertex<<endl;
+            list_of_successors.push_back(vertex);
+
+            file>>vertex;
+
+        }
+        cout<<endl;
+        tab_vertex.push_back(list_of_successors);
+
+    }
+    cout<<"File successfully loaded."<<endl;
+    file.close();
+    return 1;
+
+}
+
+
+
+void one_Graph()
+{
+    cout<<"~~~~MULTI- OR ONE-GRAPH~~~~ "<<endl<<endl;
+	adjoint = 1;
+
+    for(int i=0; i<number_of_vertex&& adjoint == 1; i++)
+        for(int j=1; j<tab_vertex[i].size()-1 && adjoint == 1; j++)
+            for (int k = 2; k < tab_vertex[i].size() && adjoint == 1; k++)
+			{   //cout<<tab_vertex[i][j]<<"|"<<tab_vertex[i][k]<<endl;
+
+				if (tab_vertex[i][j] == tab_vertex[i][k])
+                {   adjoint = 0;
+					cout<<"IT IS MULTIGRAPH "<<endl;
+                }
+
+			}
+
+    if(adjoint==1)
+        cout<<"IT IS ONE-GRAPH"<<endl<<endl;
+}
+
+
+
+void ver_Of_Successors()
+{
+    adjoint=1;
+    int successors=0,s1=0,s2=0,same=0;
+
+    for(int i=0;i<number_of_vertex&&adjoint==1;i++)
+        for(int j=1;j<number_of_vertex&&adjoint==1;j++)
+            for(int x=1;x<tab_vertex[i].size()&&adjoint==1;x++)
+                for(int y=1;y<tab_vertex[j].size()&&adjoint==1;y++)
+                {
+                    //cout<<tab_vertex[i][x]<<"=\="<< tab_vertex[j][y]<<endl;//
+                    if(tab_vertex[i][x]== tab_vertex[j][y])
+                    {
+                        s1=i;s2=j;
+                        successors=1;
+                        adjoint=0;
+                    }
+                }
+
+
+
+    if(successors==1)
+    {
+        for(int x=1;x<tab_vertex[s1].size();x++)
+            for(int y=1;y<tab_vertex[s2].size();y++)
+            {
+                //cout<<"ROWNE?: "<<tab_vertex[s1][x]<<"|| "<<tab_vertex[s2][y]<<endl;
+                if(tab_vertex[s1][x]==tab_vertex[s2][y])
+                    same=1;
+            }
+    }
+    if(same==1)
+    adjoint=1;
+}
+
+
+
+
+void firstStructure()
+{
+    cout<<endl<<"FIRST STRUCTURE"<<endl;
+    int z1,z2;
+
+    for(int i=0; i<number_of_vertex;i++)
+        for(int j=1 ;j<(tab_vertex[i].size())-1; j++)
+            for(int k=2; k<(tab_vertex[i].size());k++)
+            {
+                if(tab_vertex[i][j]&& tab_vertex[i][k])
+                {
+                    z1= tab_vertex[i][j];
+                    z2= tab_vertex[i][k];
+                    //cout<<tab_vertex[i][j]<<"||||"<<tab_vertex[i][k]<<endl;
+
+                    for(int x=1; x<tab_vertex[z1-1].size();  x++)
+                        for(int y=1; y<tab_vertex[z2-1].size();y++)
+                        {
+                            //cout<<tab_vertex[z1-1][x]<<"|"<<tab_vertex[z2-1][y]<<endl;
+                            if(tab_vertex[z1-1][x]== tab_vertex[z2-1][y])
+                                linear=0;
+                        }
+                }
+            }
+}
+
+
+
+void secondStructure()
+{
+    cout<<"SECOND STRUCTURE"<<endl;
+    int z1,z2;
+
+    for(int i =0; i<number_of_vertex;i++)
+        for(int j=1 ;j<(tab_vertex[i].size())-1; j++)
+            for(int k=2;k<tab_vertex[i].size();k++)
+            {
+                if(tab_vertex[i][j]&&tab_vertex[i][k])
+                {
+                    z1=tab_vertex[i][j];
+                    z2=tab_vertex[i][k];
+                    for(int x=1; x<tab_vertex[z1-1].size();  x++)
+                        for(int y=1; y<tab_vertex[z2-1].size();y++)
+                        {
+                            //cout<<tab_vertex[z1-1][x]<<"|"<<tab_vertex[z2-1][y]<<endl;
+                            if(tab_vertex[z1-1][x]==tab_vertex[i][0]&& tab_vertex[z2-1][y]==tab_vertex[i][0])
+                            linear=0;
+
+
+                        }
+                }
+            }
+}
+
+
+
+void thirdStructure()
+{
+    cout<<"THIRD STRUCTURE"<<endl<<endl;
+    int z1,z2;
+
+    for(int i =0; i<number_of_vertex;i++)
+        for(int j=1 ;j<(tab_vertex[i].size()); j++)
+        {
+            z1=tab_vertex[i][j];
+            for(int x=0;x<tab_vertex[z1-1].size();x++)
+            {
+                if(tab_vertex[z1-1][x]==tab_vertex[i][0])
+                {
+                    for(int y=0;y<tab_vertex[i].size();y++)
+                        if(tab_vertex[i][y]==tab_vertex[i][0])
+                            for(int z=0;z<tab_vertex[z1-1].size();z++)
+                                if(tab_vertex[z1].size()==tab_vertex[z1-1][0])
+                                    linear=0;
+                }
+            }
+        }
+}
+
+
+
+void orginalGraph()
+{
+    int a=1,b=1,c=2,free_edge=1;
+    int s1=0,s2=0,b1=0,c1=0,b2=0,s=0,h=0,q=1,counter=0;
+
+        for(int i=0; i<number_of_vertex;i++,a++)
+        {
+            vector <int>list1;
+
+            list1.push_back(a);
+            list1.push_back(b);
+            list1.push_back(c);
+
+            i_edges.push_back(list1);
+            orginal_g.push_back(list1);
+
+            b=b+2;
+            c=c+2;
+        }
+
+    for(int x =0 ; x<number_of_vertex;x++)
+        for(int y=1; y<tab_vertex[x].size();y++)
+            {
+                s1=tab_vertex[x][y];
+                c1=i_edges[x][2];
+                s2=i_edges[s1-1][1];
+                i_edges[s1-1][1]=c1;
+
+                for(int abc=0;abc<number_of_vertex;abc++)
+                    for(int ab=1;ab<i_edges[abc].size();ab++)
+                        if(i_edges[abc][ab]==s2)
+                            i_edges[abc][ab]=c1;
+
+            }
+
+
+    cout<<endl;
+
+        for(int i=0;i<number_of_vertex;i++)
+        {
+            for(int j=0; j<i_edges[i].size();j++)
+                cout<<i_edges[i][j]<<"  ";
+            cout<<endl;
+        }
+
+    int theb=i_edges[0][1];
+
+    for(int i=0;i<number_of_vertex;i++)
+        for(int j=1; j<i_edges[i].size();j++)
+        {
+            if(theb<i_edges[i][j])
+                theb=i_edges[i][j];
+        }
+
+    s=theb;
+    counter=2;
+
+    vector<int>tab;
+
+    for(int i=0;i<i_edges.size();i++)
+        for(int j=1; j<i_edges[i].size();j++)
+            tab.push_back(i_edges[i][j]);
+
+    sort(tab.begin() , tab.end());
+
+    int counter_1=1;
+
+    for(int x=1;x<tab.size();x++)
+    {
+        if(tab[x]==1)
+        continue;
+
+        else if(tab[x]!=tab[x-1])
+            counter_1++;
+
+    }
+
+
+    for(counter=1;counter<=counter_1;counter++)
+    {
+        for(int i=0,s=theb;i<i_edges.size();i++)
+            for(int j=1; j<i_edges[i].size();j++)
+                if(i_edges[i][j]<=s&&i_edges[i][j]>=counter)
+                {
+                    s=i_edges[i][j];
+                    h=i;
+                    q=j;
+                }
+
+        for(int abc=0;abc<number_of_vertex;abc++)
+            for(int ab=1;ab<i_edges[abc].size();ab++)
+                if(i_edges[abc][ab]==i_edges[h][q])
+                    i_edges[abc][ab]=counter;
+
+        i_edges[h][q]=counter;
+
+    }
+
+
+    for(int i=0;i<number_of_vertex;i++)
+    {
+        for(int j=0; j<i_edges[i].size();j++)
+        {
+            cout<<i_edges[i][j]<<"  ";
+        }
+        cout<<endl;
+
+    }
+
+
+    for(int i=1;i<=counter_1;i++)
+    {
+        vector <int>list1;
+
+        list1.push_back(i);
+
+        for(int x=0;x<i_edges.size();x++)
+        {
+            if(i_edges[x][1]==i)
+            {
+                list1.push_back(i_edges[x][2]);
+
+            }
+
+
+        }
+    Final_oGraph.push_back(list1);
+    }
+
+    cout<<endl;
+    for(int i=0;i<counter_1;i++)
+    {
+        for(int j=0; j<Final_oGraph[i].size();j++){
+        cout<<Final_oGraph[i][j]<<"  ";
+    }
+    cout<<endl;
+    }
+
+}
+
+
+void Write()
+{
+    ofstream file;
+    string file_Name;
+
+    cout << endl <<  "Enter the file name: \t" << endl;
+    cin>>file_Name;
+    file_Name+=".txt";
+    file.open(file_Name.c_str());
+
+	if (file.good() == true)
+    {
+		file << Final_oGraph.size();
+		for (int i = 0; i < Final_oGraph.size(); i++)
+        {
+			file << "\n";
+			for (int j = 0; j < Final_oGraph[i].size(); j++)
+            {
+				file << Final_oGraph[i][j] << "\t";
+			}
+			file << "0";
+		}
+	}
+	else cout << "Error file! " << endl;
+
+}
+
+
+main()
+{
+    if(Load()==1)
+    {
+        one_Graph();
+        if(adjoint==1)
+        {
+            ver_Of_Successors();
+            if(adjoint==1)
+            {
+                cout<<"IT's ADJOINT GRAPH"<<endl;
+
+                firstStructure();
+                secondStructure();
+                thirdStructure();
+
+                if( linear==0)
+                    cout<<"Graph isn't linear"<<endl;
+
+                else
+                    cout<<" Graph is linear"<<endl;
+
+                orginalGraph();
+                Write();
+            }
+        else
+        cout<<"ISNT adjoint"<<endl;
+        }
+
+        else if(adjoint==0)
+            cout<<"ISN'T ADJOINT"<<endl;
+
+    }
+    else
+    cout<< "Try again!"<<endl<<"~*~GOOD LUCK!~*~"<<endl;
+}
