@@ -69,7 +69,7 @@ void one_Graph()
 
     for(int i=0; i<number_of_vertex&& adjoint == 1; i++)
         for(int j=1; j<tab_vertex[i].size()-1 && adjoint == 1; j++)
-            for (int k = 2; k < tab_vertex[i].size() && adjoint == 1; k++)
+            for (int k = j+1; k < tab_vertex[i].size() && adjoint == 1; k++)
 			{   //cout<<tab_vertex[i][j]<<"|"<<tab_vertex[i][k]<<endl;
 
 				if (tab_vertex[i][j] == tab_vertex[i][k])
