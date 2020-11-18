@@ -68,9 +68,9 @@ void one_Graph()
 	adjoint = 1;
 
     for(int i=0; i<number_of_vertex&& adjoint == 1; i++)
-        for(int j=1; j<tab_vertex[i].size()-1 && adjoint == 1; j++)
-            for (int k = 2; k < tab_vertex[i].size() && adjoint == 1; k++)
-			{   //cout<<tab_vertex[i][j]<<"|"<<tab_vertex[i][k]<<endl;
+        for(int j=1; j<(tab_vertex[i].size())-1 && adjoint == 1; j++)
+            for (int k = j+1; k < tab_vertex[i].size() && adjoint == 1; k++)
+			{  //G_9 cout<<tab_vertex[i][j]<<"|"<<tab_vertex[i][k]<<endl;
 
 				if (tab_vertex[i][j] == tab_vertex[i][k])
                 {   adjoint = 0;
@@ -88,37 +88,33 @@ void one_Graph()
 void ver_Of_Successors()
 {
     adjoint=1;
-    int successors=0,s1=0,s2=0,same=0;
+    int c_1=0;
 
     for(int i=0;i<number_of_vertex&&adjoint==1;i++)
-        for(int j=1;j<number_of_vertex&&adjoint==1;j++)
-            for(int x=1;x<tab_vertex[i].size()&&adjoint==1;x++)
-                for(int y=1;y<tab_vertex[j].size()&&adjoint==1;y++)
-                {
-                    //cout<<tab_vertex[i][x]<<"=\="<< tab_vertex[j][y]<<endl;//
-                    if(tab_vertex[i][x]== tab_vertex[j][y])
-                    {
-                        s1=i;s2=j;
-                        successors=1;
-                        adjoint=0;
-                    }
-                }
-
-
-
-    if(successors==1)
-    {
-        for(int x=1;x<tab_vertex[s1].size();x++)
-            for(int y=1;y<tab_vertex[s2].size();y++)
+        for(int j=0;j<number_of_vertex&&adjoint==1;j++)
+            if(tab_vertex[i].size()== tab_vertex[j].size())
             {
-                //cout<<"ROWNE?: "<<tab_vertex[s1][x]<<"|| "<<tab_vertex[s2][y]<<endl;
-                if(tab_vertex[s1][x]==tab_vertex[s2][y])
-                    same=1;
+				c_1 = 0;
+				for (int x = 1; x < tab_vertex[i].size() && adjoint == 1; x++) 
+				{
+					if (tab_vertex[i][x] == tab_vertex[j][x])
+						c_1 += 1;
+				}
+				if (c_1 == tab_vertex[i].size()-1 || c_1 == 0)
+					adjoint = 1;
+				else adjoint = 0;
             }
-    }
-    if(same==1)
-    adjoint=1;
+			else 
+			{
+				for (int x = 1; x < tab_vertex[i].size() && adjoint == 1; x++)
+					for (int y = 1; y <tab_vertex[j].size() && adjoint == 1; y++) 
+						if (tab_vertex[i][x] != tab_vertex[j][y])
+							adjoint = 1;
+
+						else adjoint = 0;
+            }
 }
+
 
 
 
